@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -e
+source "./bin/functions"
+
+pp_info "setup" "Installing required languages"
+if not_installed "asdf"; then
+  pp_warn "setup" "
+    We are using asdf (https://github.com/asdf-vm/asdf) to manage tool
+    dependencies, since it was not found on your system we cannot ensure that you
+    are using the correct versions of all the tools. Please install it and run
+    this script again, or proceed at your own peril.
+  "
+else
+  set +e
+  asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git 2>/dev/null
+  set -e
+
+  asdf install
+fi
+
+if not_installed "yarn"; then
+  pp_error "error" "yarn was not detected on this system, you need it to install frontend dependencies"
+
+  exit -1
+fi
+
+pp_info "setup" "Setting up env"
+cp -n .env.sample .env
+
+pp_info "setup" "Installing dependencies with yarn"
+yarn
+
+pp_info "setup" "Done! Now get insideeee"
+pp_info "setup" "Edit your .env to apply your own DATABASE_URl then run \"yarn db:migrate\""
