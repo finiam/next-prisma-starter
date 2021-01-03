@@ -1,3 +1,5 @@
+# next-prisma-starter
+
 This is a [Next.js](https://nextjs.org/) project that comes with Prisma and Tailwind already setup.
 
 It has cookie-based auth already setup and has a `Notes` resource as an example of a private localized resource for a given user. One user has many notes and only that user can see and change their notes.
@@ -30,7 +32,7 @@ The `src/pages/api` directory is mapped to `/api/*`. Files in this directory are
 This project start requires two environment variables to work. `DATABASE_URL` and `SECRET_KEY`
 
 `DATABASE_URL` should be a URL postgres database, either local or not.
-`SECRET_KEY` is the encryption key used by `bcrypt` for users passwords.
+`SECRET_KEY` is the encryption key used by `bcrypt` for user's passwords.
 
 ## Deploy
 
@@ -38,7 +40,11 @@ This project is ready for deployment on Heroku. Just create a Heroku project and
 
 You can also deploy it on Vercel, as long you setup your Postgresql database somewhere else. I recommend Heroku for now as the round trip times from Vercel to a regular SQL database are a bit big. Also connection management is a issue right now. Stateless functions don't deal well it that. If you want to use Vercel, I'd recommend swaping out Prisma+SQL with FaunaDB for example.
 
+If you want to keep Prisma and Postgres, please use something like pgBouncer to pool your SQL connections, otherwise you will run into problems. You can also use CockroachDB to have a database on each major region.
+
 Check out [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+You can check the Heroku deployment [here](https://next-prisma-starter.herokuapp.com/).
 
 ## Learn More
 
@@ -46,3 +52,7 @@ To learn more about Next.js, take a look at the following resources:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+## Contributing
+
+Contributions are welcome.

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { User } from "@prisma/client";
 import redaxios from "redaxios";
-import useServerRefresher from "root/hooks/useServerRefresher";
 import { useForm } from "react-hook-form";
+import useServerRefresher from "root/hooks/useServerRefresher";
 
 interface Props {
   user: User;
@@ -10,7 +10,9 @@ interface Props {
 
 export default function Profile({ user }: Props) {
   const [error, setError] = useState();
-  const { register, handleSubmit } = useForm({ defaultValues: user });
+  const { register, handleSubmit, formState } = useForm({
+    defaultValues: user,
+  });
   const refresh = useServerRefresher();
 
   const onSubmit = async (params) => {
@@ -69,6 +71,10 @@ export default function Profile({ user }: Props) {
           <button className="button">Submit</button>
         </div>
       </form>
+
+      {formState.isSubmitted && !error && (
+        <p className="mt-2">Profile updated! :)</p>
+      )}
     </div>
   );
 }

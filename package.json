@@ -24,6 +24,7 @@
     "next": "10.0.4",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "react-error-boundary": "^3.1.0",
     "react-hook-form": "^6.13.1",
     "redaxios": "^0.3.0",
     "superjson": "^1.4.1"

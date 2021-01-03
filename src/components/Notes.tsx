@@ -2,30 +2,38 @@ import React, { useState } from "react";
 import { Note } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import redaxios from "redaxios";
-import useServerRefresher from "root/hooks/useServerRefresher";
+import { useErrorHandler } from "react-error-boundary";
 
 interface Props {
   notes: Note[];
 }
 
-export default function Notes({ notes }: Props) {
+export default function Notes({ notes: initialNotes }: Props) {
+  const [notes, setNotes] = useState(initialNotes);
   const { handleSubmit, register, setValue } = useForm();
   const [submited, setSubmited] = useState(false);
-  const refresh = useServerRefresher();
+  const handleError = useErrorHandler();
 
   const handleFormSubmit = async ({ content }) => {
-    event.preventDefault();
     setSubmited(true);
-    await redaxios.post("/api/notes", { content });
-    setValue("content", "");
-    refresh();
-    setSubmited(false);
+
+    redaxios
+      .post("/api/notes", { content })
+      .then((response) => {
+        setValue("content", "");
+        setSubmited(false);
+        setNotes([...notes, response.data]);
+      })
+      .catch((error) => handleError(error));
   };
 
   const handleDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
     const { id } = event.currentTarget.dataset;
-    await redaxios.delete(`/api/notes/${id}`);
-    refresh();
+
+    redaxios
+      .delete(`/api/notes/${id}`)
+      .then(() => setNotes(notes.filter((note) => note.id !== Number(id))))
+      .catch((error) => handleError(error));
   };
 
   return (
