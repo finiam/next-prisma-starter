@@ -1,7 +1,7 @@
 import React from "react";
 
 interface Props {
-  error?: any;
+  error?: { message: string };
   resetErrorBoundary: () => void;
 }
 
@@ -10,7 +10,9 @@ export default function Error({ error, resetErrorBoundary }: Props) {
     <div className="absolute-center">
       <p className="text-xl text-red-600">Error!</p>
       {error && <pre>{error.message}</pre>}
-      <button onClick={resetErrorBoundary}>Try again</button>
+      <button onClick={resetErrorBoundary} type="button">
+        Try again
+      </button>
     </div>
   );
 }

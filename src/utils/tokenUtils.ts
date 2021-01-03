@@ -15,18 +15,18 @@ const cookieOptions = {
 
 export function setCookie(
   res: NextApiResponse,
-  name: String,
-  value: String,
-  options: any = {}
-) {
+  name: string,
+  value: string,
+  options: Record<string, unknown> = {}
+): void {
   const stringValue =
-    typeof value === "object" ? "j:" + JSON.stringify(value) : String(value);
+    typeof value === "object" ? `j:${JSON.stringify(value)}` : String(value);
 
   res.setHeader("Set-Cookie", serialize(name, String(stringValue), options));
 }
 
-export function authenticateUser(user: User, res: NextApiResponse) {
-  if (!user) return undefined;
+export function authenticateUser(user: User, res: NextApiResponse): void {
+  if (!user) return;
 
   const token = jwt.sign({ email: user.email }, SECRET_KEY, {
     expiresIn: "1d",
@@ -35,7 +35,7 @@ export function authenticateUser(user: User, res: NextApiResponse) {
   setCookie(res, "auth", token, cookieOptions);
 }
 
-export function clearUser(res: NextApiResponse) {
+export function clearUser(res: NextApiResponse): void {
   setCookie(res, "auth", "0", {
     ...cookieOptions,
     path: "/",
@@ -51,6 +51,7 @@ export async function userFromToken(token: string): Promise<User> {
 
     if (!data) return undefined;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return findUserByEmail((data as any).email);
   } catch (error) {
     return undefined;
@@ -60,13 +61,14 @@ export async function userFromToken(token: string): Promise<User> {
 export async function ensureAuthenticated(
   req: NextApiRequest,
   res: NextApiResponse
-): Promise<User> {
+): Promise<User | undefined> {
   const user = await userFromToken(req.cookies.auth);
 
   if (!user) {
     res.status(404).end("");
     res.end();
-    return;
+
+    return undefined;
   }
 
   return user;

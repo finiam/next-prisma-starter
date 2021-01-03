@@ -12,6 +12,7 @@ export async function createUser(params: UserParams): Promise<User> {
   const user = await prisma.user.create({
     data: { ...params, password },
   });
+
   user.password = "";
 
   return user;
@@ -26,14 +27,17 @@ export async function findUserByEmail(email: string): Promise<User> {
 }
 
 export async function authenticateOrCreateUser(params: UserParams) {
-  let user = await prisma.user.findUnique({ where: { email: params.email } });
+  const user = await prisma.user.findUnique({ where: { email: params.email } });
 
   if (!user) return createUser(params);
-  else if (await bcrypt.compare(params.password, user.password)) {
+
+  if (await bcrypt.compare(params.password, user.password)) {
     user.password = "";
 
     return user;
   }
+
+  return undefined;
 }
 
 export async function updateUser(id: number, params: UserParams) {
@@ -44,6 +48,7 @@ export async function updateUser(id: number, params: UserParams) {
     where: { id },
     data: { ...params, password },
   });
+
   if (user) user.password = "";
 
   return user;

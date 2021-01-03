@@ -70,7 +70,7 @@ export default function Notes({ notes: initialNotes }: Props) {
           ref={register({ required: true })}
         />
 
-        <button className="button" disabled={submited}>
+        <button className="button" type="submit" disabled={submited}>
           Submit
         </button>
       </form>

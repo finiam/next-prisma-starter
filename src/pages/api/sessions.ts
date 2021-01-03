@@ -4,7 +4,7 @@ import ensureMethod from "root/utils/ensureMethod";
 import { authenticateUser, clearUser } from "root/utils/tokenUtils";
 
 const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
-  let user = await authenticateOrCreateUser(req.body);
+  const user = await authenticateOrCreateUser(req.body);
 
   if (user) {
     authenticateUser(user, res);
@@ -29,6 +29,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       break;
     case "DELETE":
       await handleDelete(req, res);
+      break;
+    default:
       break;
   }
 };

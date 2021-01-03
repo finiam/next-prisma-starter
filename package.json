@@ -14,7 +14,7 @@
     "db:migrate": "prisma migrate deploy --preview-feature && yarn db:generate",
     "db:gen:migration": "prisma migrate dev --preview-feature",
     "db:reset": "prisma migrate reset --preview-feature",
-    "lint": "prettier --check src"
+    "lint": "eslint src --ext ts,tsx,js,jsx"
   },
   "dependencies": {
     "@prisma/client": "2.13.1",
@@ -27,6 +27,7 @@
     "react-error-boundary": "^3.1.0",
     "react-hook-form": "^6.13.1",
     "redaxios": "^0.3.0",
+    "tailwindcss": "^2.0.2",
     "superjson": "^1.4.1"
   },
   "devDependencies": {
@@ -35,10 +36,21 @@
     "@types/jsonwebtoken": "^8.5.0",
     "@types/node": "^14.14.16",
     "@types/react": "^17.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.11.1",
+    "@typescript-eslint/parser": "^4.11.1",
     "autoprefixer": "^10.1.0",
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-finiam": "^1.0.2",
+    "eslint-config-import": "^0.13.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.3.0",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "postcss": "^8.2.1",
     "prettier": "^2.2.1",
-    "tailwindcss": "^2.0.2",
     "typescript": "^4.1.3"
   }
 }

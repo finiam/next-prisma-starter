@@ -14,6 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (notes.count < 1) {
     res.status(404).send("");
+
     return;
   }
 

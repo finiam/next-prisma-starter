@@ -19,19 +19,20 @@ export default function Profile({ user }: Props) {
     try {
       await redaxios.put("/api/user", params);
       refresh();
-    } catch (error) {
-      setError(error);
+    } catch (networkError) {
+      setError(networkError);
     }
   };
 
   const onClick = async () => {
     try {
+      // eslint-disable-next-line no-restricted-globals, no-alert
       if (!confirm("Are you sure? Everything will be deleted!")) return;
 
       await redaxios.delete("/api/user");
       refresh();
-    } catch (error) {
-      setError(error);
+    } catch (networkError) {
+      setError(networkError);
     }
   };
 
@@ -43,14 +44,19 @@ export default function Profile({ user }: Props) {
         className="mt-14 max-w-lg space-y-4"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <label className="flex flex-col">
+        <label className="flex flex-col" htmlFor="name">
           Email
-          <input type="text" name="email" ref={register()} />
+          <input id="name" type="text" name="email" ref={register()} />
         </label>
 
-        <label className="flex flex-col">
+        <label className="flex flex-col" htmlFor="password">
           Password
-          <input type="password" name="password" ref={register()} />
+          <input
+            id="password"
+            type="password"
+            name="password"
+            ref={register()}
+          />
         </label>
 
         {error && (
@@ -68,7 +74,9 @@ export default function Profile({ user }: Props) {
         </button>
 
         <div className="space-x-4">
-          <button className="button">Submit</button>
+          <button className="button" type="submit">
+            Submit
+          </button>
         </div>
       </form>
 

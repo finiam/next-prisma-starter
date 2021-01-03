@@ -35,7 +35,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   return {
     props: superjson.serialize({
-      user: user,
+      user,
     }).json,
   };
 }

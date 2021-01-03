@@ -37,5 +37,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case "DELETE":
       await handleDelete(req, res);
       break;
+    default:
+      break;
   }
 };

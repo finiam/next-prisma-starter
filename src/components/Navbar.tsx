@@ -30,7 +30,7 @@ export default function Navbar({ user }: Props) {
           </li>
         </ul>
 
-        <button className="ml-8 button" onClick={onLogout}>
+        <button className="ml-8 button" onClick={onLogout} type="button">
           Logout
         </button>
       </div>

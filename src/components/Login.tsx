@@ -14,8 +14,8 @@ export default function Login() {
       await redaxios.post("/api/sessions", params);
 
       refresh();
-    } catch (error) {
-      setError(error);
+    } catch (networkError) {
+      setError(networkError);
     }
   };
 
@@ -27,26 +27,29 @@ export default function Login() {
       <Head>
         <title>Login</title>
       </Head>
-      <label className="flex flex-col">
+      <label className="flex flex-col" htmlFor="email">
         Email
         <input
-          className="form-input"
+          id="email"
           name="email"
           type="email"
           ref={register({ required: true })}
         />
       </label>
 
-      <label className="flex flex-col">
+      <label className="flex flex-col" htmlFor="password">
         Password
         <input
+          id="password"
           name="password"
           type="password"
           ref={register({ required: true })}
         />
       </label>
 
-      <button className="button">Login</button>
+      <button className="button" type="submit">
+        Login
+      </button>
 
       {error && <p>User password combination not found</p>}
     </form>
