@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Note } from "@prisma/client";
 import { useForm } from "react-hook-form";
-import redaxios from "redaxios";
 import { useErrorHandler } from "react-error-boundary";
+import { createNote, deleteNote } from "root/pages/api/notes";
 
 interface Props {
   notes: Note[];
@@ -17,22 +17,20 @@ export default function Notes({ notes: initialNotes }: Props) {
   const handleFormSubmit = async ({ content }) => {
     setSubmited(true);
 
-    redaxios
-      .post("/api/notes", { content })
-      .then((response) => {
+    createNote({ content })
+      .then((note) => {
         setValue("content", "");
         setSubmited(false);
-        setNotes([...notes, response.data]);
+        setNotes([...notes, note]);
       })
       .catch((error) => handleError(error));
   };
 
   const handleDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { id } = event.currentTarget.dataset;
+    const id = Number(event.currentTarget.dataset.id);
 
-    redaxios
-      .delete(`/api/notes/${id}`)
-      .then(() => setNotes(notes.filter((note) => note.id !== Number(id))))
+    deleteNote(id)
+      .then(() => setNotes(notes.filter((note) => note.id !== id)))
       .catch((error) => handleError(error));
   };
 

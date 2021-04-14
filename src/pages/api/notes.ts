@@ -1,16 +1,31 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { createNote } from "root/lib/notes";
-import { ensureAuthenticated } from "root/utils/tokenUtils";
-import ensureMethod from "root/utils/ensureMethod";
+import { getCurrentUser } from "root/utils/tokenUtils";
+import prisma from "root/lib/prisma";
+import { Note } from ".prisma/client";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  if (!ensureMethod(req, res, "POST")) return;
+export const config = { rpc: true };
 
-  const user = await ensureAuthenticated(req, res);
+export async function listNotes(): Promise<Note[]> {
+  const user = await getCurrentUser();
 
-  if (!user) return;
+  if (!user) return null;
 
-  const note = await createNote(user, req.body);
+  return prisma.note.findMany({ where: { userId: user.id } });
+}
 
-  res.json(note);
-};
+export async function deleteNote(id: number) {
+  const user = await getCurrentUser();
+
+  if (!user) return null;
+
+  return prisma.note.deleteMany({ where: { id, userId: user.id } });
+}
+
+export async function createNote(noteParams: { content: string }) {
+  const user = await getCurrentUser();
+
+  if (!user) return null;
+
+  return prisma.note.create({
+    data: { ...noteParams, user: { connect: { id: user.id } } },
+  });
+}

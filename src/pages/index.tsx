@@ -7,7 +7,7 @@ import Login from "root/components/Login";
 import Notes from "root/components/Notes";
 import { userFromToken } from "root/utils/tokenUtils";
 import Navbar from "root/components/Navbar";
-import { listNotes } from "root/lib/notes";
+import { listNotes } from "./api/notes";
 
 interface Props {
   user?: User;
@@ -35,7 +35,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return { props: {} };
   }
 
-  const notes = await listNotes(user);
+  const notes = await listNotes();
 
   return {
     props: superjson.serialize({

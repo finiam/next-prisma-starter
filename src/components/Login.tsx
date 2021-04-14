@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
-import redaxios from "redaxios";
 import useServerRefresher from "root/hooks/useServerRefresher";
+import { login } from "root/pages/api/users";
 
 export default function Login() {
   const { handleSubmit, register } = useForm();
@@ -11,7 +11,7 @@ export default function Login() {
 
   const onSubmit = async (params) => {
     try {
-      await redaxios.post("/api/sessions", params);
+      await login(params);
 
       refresh();
     } catch (networkError) {

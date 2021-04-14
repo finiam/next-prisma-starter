@@ -1,8 +1,8 @@
 import React from "react";
-import redaxios from "redaxios";
 import Link from "next/link";
 import { User } from "@prisma/client";
 import useServerRefresher from "root/hooks/useServerRefresher";
+import { logout } from "root/pages/api/users";
 
 interface Props {
   user: User;
@@ -12,7 +12,7 @@ export default function Navbar({ user }: Props) {
   const refresh = useServerRefresher();
 
   const onLogout = async () => {
-    await redaxios.delete("/api/sessions");
+    await logout();
     refresh();
   };
 
