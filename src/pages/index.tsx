@@ -7,6 +7,7 @@ import Login from "root/components/Login";
 import Notes from "root/components/Notes";
 import { userFromToken } from "root/lib/tokenUtils";
 import Navbar from "root/components/Navbar";
+import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
 import { listNotes } from "./api/notes";
 
 interface Props {

@@ -46,17 +46,12 @@ export default function Profile({ user }: Props) {
       >
         <label className="flex flex-col" htmlFor="name">
           Email
-          <input id="name" type="text" name="email" ref={register()} />
+          <input type="text" {...register("email")} />
         </label>
 
         <label className="flex flex-col" htmlFor="password">
           Password
-          <input
-            id="password"
-            type="password"
-            name="password"
-            ref={register()}
-          />
+          <input type="password" {...register("password")} />
         </label>
 
         {error && (

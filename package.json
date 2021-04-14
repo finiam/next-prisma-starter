@@ -17,7 +17,7 @@
     "lint": "eslint src --ext ts,tsx,js,jsx"
   },
   "dependencies": {
-    "@prisma/client": "2.13.1",
+    "@prisma/client": "2.21.1",
     "bcrypt": "^5.0.0",
     "cookie": "^0.4.1",
     "jsonwebtoken": "^8.5.1",
@@ -26,14 +26,13 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-error-boundary": "^3.1.0",
-    "react-hook-form": "^6.13.1",
+    "react-hook-form": "^7.1.0",
     "redaxios": "^0.4.1",
     "superjson": "^1.4.1",
     "tailwindcss": "^2.0.2"
   },
   "devDependencies": {
-    "@prisma/cli": "2.13.1",
-    "@tailwindcss/forms": "^0.2.1",
+    "@tailwindcss/forms": "^0.3.2",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/node": "^14.14.16",
     "@types/react": "^17.0.0",
@@ -52,6 +51,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "postcss": "^8.2.1",
     "prettier": "^2.2.1",
+    "prisma": "^2.21.1",
     "typescript": "^4.1.3"
   }
 }

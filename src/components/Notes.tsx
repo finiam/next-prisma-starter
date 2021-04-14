@@ -62,10 +62,9 @@ export default function Notes({ notes: initialNotes }: Props) {
         onSubmit={handleSubmit(handleFormSubmit)}
       >
         <input
+          {...register("content", { required: true })}
           className="mr-4"
-          name="content"
           type="text"
-          ref={register({ required: true })}
         />
 
         <button className="button" type="submit" disabled={submited}>
