@@ -4,12 +4,10 @@ import Error from "root/components/Error";
 import "tailwindcss/tailwind.css";
 import "root/styles/defaults.css";
 
-function App({ Component, pageProps }) {
+export default function App({ Component, pageProps }) {
   return (
     <ErrorBoundary FallbackComponent={Error}>
       <Component {...pageProps} />
     </ErrorBoundary>
   );
 }
-
-export default App;

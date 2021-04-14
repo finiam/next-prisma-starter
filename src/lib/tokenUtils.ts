@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
 import { User } from "@prisma/client";
 import { serialize } from "cookie";
-import { findUserByEmail } from "root/lib/users";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getContext } from "next-rpc/context";
+import prisma from "root/lib/prisma";
+import { UNAUTHENTICATED_ERROR } from "./errorTypes";
 
 const { SECRET_KEY } = process.env;
 const cookieOptions = {
@@ -14,7 +16,7 @@ const cookieOptions = {
 };
 
 export function setCookie(
-  res: NextApiResponse,
+  res: any,
   name: string,
   value: string,
   options: Record<string, unknown> = {}
@@ -25,7 +27,9 @@ export function setCookie(
   res.setHeader("Set-Cookie", serialize(name, String(stringValue), options));
 }
 
-export function authenticateUser(user: User, res: NextApiResponse): void {
+export function authenticateUser(user: User): void {
+  const { res } = getContext();
+
   if (!user) return;
 
   const token = jwt.sign({ email: user.email }, SECRET_KEY, {
@@ -35,7 +39,9 @@ export function authenticateUser(user: User, res: NextApiResponse): void {
   setCookie(res, "auth", token, cookieOptions);
 }
 
-export function clearUser(res: NextApiResponse): void {
+export function clearUser(): void {
+  const { res } = getContext();
+
   setCookie(res, "auth", "0", {
     ...cookieOptions,
     path: "/",
@@ -51,8 +57,13 @@ export async function userFromToken(token: string): Promise<User> {
 
     if (!data) return undefined;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return findUserByEmail((data as any).email);
+    const user = await prisma.user.findUnique({
+      where: { email: (data as any).email },
+    });
+
+    if (user) user.password = "";
+
+    return user;
   } catch (error) {
     return undefined;
   }
@@ -70,6 +81,15 @@ export async function ensureAuthenticated(
 
     return undefined;
   }
+
+  return user;
+}
+
+export async function getCurrentUser(): Promise<User> {
+  const { req } = getContext();
+  const user = await userFromToken((req as any).cookies.auth);
+
+  if (!user) throw new Error(UNAUTHENTICATED_ERROR);
 
   return user;
 }

@@ -4,9 +4,10 @@ import superjson from "superjson";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import Login from "root/components/Login";
-import { userFromToken } from "root/utils/tokenUtils";
+import { userFromToken } from "root/lib/tokenUtils";
 import Navbar from "root/components/Navbar";
 import Profile from "root/components/Profile";
+import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
 
 interface Props {
   user?: User;
@@ -27,15 +28,17 @@ export default function Home({ user }: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const user = await userFromToken(context.req.cookies.auth);
+  try {
+    const user = await userFromToken(context.req.cookies.auth);
 
-  if (!user) {
-    return { props: {} };
+    return {
+      props: superjson.serialize({
+        user,
+      }).json,
+    };
+  } catch (error) {
+    if (error.message === UNAUTHENTICATED_ERROR) return { props: {} };
+
+    throw error;
   }
-
-  return {
-    props: superjson.serialize({
-      user,
-    }).json,
-  };
 }

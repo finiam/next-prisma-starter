@@ -7,7 +7,7 @@ interface Props {
 
 export default function Error({ error, resetErrorBoundary }: Props) {
   return (
-    <div className="absolute-center">
+    <div className="h-screen center">
       <p className="text-xl text-red-600">Error!</p>
       {error && <pre>{error.message}</pre>}
       <button onClick={resetErrorBoundary} type="button">

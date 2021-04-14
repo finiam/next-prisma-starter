@@ -5,9 +5,10 @@ import Head from "next/head";
 import superjson from "superjson";
 import Login from "root/components/Login";
 import Notes from "root/components/Notes";
-import { userFromToken } from "root/utils/tokenUtils";
+import { userFromToken } from "root/lib/tokenUtils";
 import Navbar from "root/components/Navbar";
-import { listNotes } from "root/lib/notes";
+import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
+import { listNotes } from "./api/notes";
 
 interface Props {
   user?: User;
@@ -29,18 +30,19 @@ export default function Home({ user, notes }: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const user = await userFromToken(context.req.cookies.auth);
+  try {
+    const user = await userFromToken(context.req.cookies.auth);
+    const notes = await listNotes();
 
-  if (!user) {
-    return { props: {} };
+    return {
+      props: superjson.serialize({
+        user,
+        notes,
+      }).json,
+    };
+  } catch (error) {
+    if (error.message === UNAUTHENTICATED_ERROR) return { props: {} };
+
+    throw error;
   }
-
-  const notes = await listNotes(user);
-
-  return {
-    props: superjson.serialize({
-      user,
-      notes,
-    }).json,
-  };
 }

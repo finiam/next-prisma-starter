@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { User } from "@prisma/client";
-import redaxios from "redaxios";
 import { useForm } from "react-hook-form";
 import useServerRefresher from "root/hooks/useServerRefresher";
+import { deleteUser, updateUser } from "root/pages/api/users";
 
 interface Props {
   user: User;
@@ -17,7 +17,7 @@ export default function Profile({ user }: Props) {
 
   const onSubmit = async (params) => {
     try {
-      await redaxios.put("/api/user", params);
+      await updateUser(params);
       refresh();
     } catch (networkError) {
       setError(networkError);
@@ -29,7 +29,7 @@ export default function Profile({ user }: Props) {
       // eslint-disable-next-line no-restricted-globals, no-alert
       if (!confirm("Are you sure? Everything will be deleted!")) return;
 
-      await redaxios.delete("/api/user");
+      await deleteUser();
       refresh();
     } catch (networkError) {
       setError(networkError);
@@ -46,17 +46,12 @@ export default function Profile({ user }: Props) {
       >
         <label className="flex flex-col" htmlFor="name">
           Email
-          <input id="name" type="text" name="email" ref={register()} />
+          <input type="text" {...register("email")} />
         </label>
 
         <label className="flex flex-col" htmlFor="password">
           Password
-          <input
-            id="password"
-            type="password"
-            name="password"
-            ref={register()}
-          />
+          <input type="password" {...register("password")} />
         </label>
 
         {error && (
