@@ -4,4 +4,7 @@ const withRpc = require("next-rpc")({
 
 module.exports = withRpc({
   target: process.env.NEXT_TARGET,
+  future: {
+    webpack5: true,
+  },
 });

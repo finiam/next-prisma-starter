@@ -1,4 +1,4 @@
-import { getCurrentUser } from "root/utils/tokenUtils";
+import { getCurrentUser } from "root/lib/tokenUtils";
 import prisma from "root/lib/prisma";
 import { Note } from ".prisma/client";
 
@@ -15,15 +15,11 @@ export async function listNotes(): Promise<Note[]> {
 export async function deleteNote(id: number) {
   const user = await getCurrentUser();
 
-  if (!user) return null;
-
   return prisma.note.deleteMany({ where: { id, userId: user.id } });
 }
 
 export async function createNote(noteParams: { content: string }) {
   const user = await getCurrentUser();
-
-  if (!user) return null;
 
   return prisma.note.create({
     data: { ...noteParams, user: { connect: { id: user.id } } },

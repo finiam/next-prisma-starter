@@ -21,7 +21,7 @@ export default function Login() {
 
   return (
     <form
-      className="absolute-center flex flex-col items-center space-y-8"
+      className="h-screen center flex flex-col items-center space-y-8"
       onSubmit={handleSubmit(onSubmit)}
     >
       <Head>

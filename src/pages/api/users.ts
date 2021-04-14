@@ -1,11 +1,12 @@
 import { User } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { NOT_FOUND_ERROR } from "root/lib/errorTypes";
 import prisma from "root/lib/prisma";
 import {
   authenticateUser,
   clearUser,
   getCurrentUser,
-} from "root/utils/tokenUtils";
+} from "root/lib/tokenUtils";
 
 export const config = { rpc: true };
 
@@ -28,13 +29,21 @@ async function createUser(params: UserParams): Promise<User> {
 export async function login(params: UserParams) {
   let user = await prisma.user.findUnique({ where: { email: params.email } });
 
-  if (!user) user = await createUser(params);
+  if (!user) {
+    user = await createUser(params);
+    authenticateUser(user);
 
-  if (await bcrypt.compare(params.password, user.password)) user.password = "";
+    return user;
+  }
 
-  if (user) authenticateUser(user);
+  if (await bcrypt.compare(params.password, user.password)) {
+    user.password = "";
+    authenticateUser(user);
 
-  return user;
+    return user;
+  }
+
+  throw new Error(NOT_FOUND_ERROR);
 }
 
 export async function logout() {
@@ -43,9 +52,6 @@ export async function logout() {
 
 export async function updateUser(params: UserParams) {
   const currentUser = await getCurrentUser();
-
-  if (!currentUser) return null;
-
   const password = params.password
     ? await bcrypt.hash(params.password, 10)
     : undefined;
@@ -64,9 +70,6 @@ export async function updateUser(params: UserParams) {
 
 export async function deleteUser() {
   const currentUser = await getCurrentUser();
-
-  if (!currentUser) return null;
-
   const response = await prisma.$transaction([
     prisma.note.deleteMany({ where: { userId: currentUser.id } }),
     prisma.user.delete({ where: { id: currentUser.id } }),

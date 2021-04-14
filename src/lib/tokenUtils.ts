@@ -1,11 +1,10 @@
 import jwt from "jsonwebtoken";
 import { User } from "@prisma/client";
 import { serialize } from "cookie";
-import { findUserByEmail } from "root/lib/users";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getContext } from "next-rpc/context";
-import { ServerResponse } from "node:http";
 import prisma from "root/lib/prisma";
+import { UNAUTHENTICATED_ERROR } from "./errorTypes";
 
 const { SECRET_KEY } = process.env;
 const cookieOptions = {
@@ -88,6 +87,9 @@ export async function ensureAuthenticated(
 
 export async function getCurrentUser(): Promise<User> {
   const { req } = getContext();
+  const user = await userFromToken((req as any).cookies.auth);
 
-  return userFromToken((req as any).cookies.auth);
+  if (!user) throw new Error(UNAUTHENTICATED_ERROR);
+
+  return user;
 }

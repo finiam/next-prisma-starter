@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { User } from "@prisma/client";
-import redaxios from "redaxios";
 import { useForm } from "react-hook-form";
 import useServerRefresher from "root/hooks/useServerRefresher";
 import { deleteUser, updateUser } from "root/pages/api/users";
