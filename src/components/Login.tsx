@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useForm } from "react-hook-form";
 import useServerRefresher from "root/hooks/useServerRefresher";
 import { login } from "root/pages/api/auth";
+import Link from "next/link";
 
 export default function Login() {
   const { handleSubmit, register } = useForm();
@@ -21,28 +22,41 @@ export default function Login() {
 
   return (
     <form
-      className="h-screen center flex flex-col items-center space-y-8"
+      className="h-screen u-center flex flex-col items-center space-y-8"
       onSubmit={handleSubmit(onSubmit)}
     >
       <Head>
         <title>Login</title>
       </Head>
 
-      <label className="flex flex-col" htmlFor="email">
-        Email
-        <input type="email" {...register("email", { required: true })} />
-      </label>
+      <div className="space-y-8">
+        <h1 className="self-start text-xl">Login</h1>
 
-      <label className="flex flex-col" htmlFor="password">
-        Password
-        <input type="password" {...register("password", { required: true })} />
-      </label>
+        <label className="flex flex-col" htmlFor="email">
+          Email
+          <input type="email" {...register("email", { required: true })} />
+        </label>
 
-      <button className="button" type="submit">
-        Login
-      </button>
+        <label className="flex flex-col" htmlFor="password">
+          Password
+          <input
+            type="password"
+            {...register("password", { required: true })}
+          />
+        </label>
 
-      {error && <p>User password combination not found</p>}
+        <button className="u-button" type="submit">
+          Login
+        </button>
+
+        {error && <p>User password combination not found</p>}
+
+        <Link href="/signup">
+          <a className="block underline" href="/signup">
+            Sign up
+          </a>
+        </Link>
+      </div>
     </form>
   );
 }

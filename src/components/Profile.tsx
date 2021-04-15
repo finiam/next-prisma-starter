@@ -49,6 +49,15 @@ export default function Profile({ user }: Props) {
           <input type="text" {...register("email")} />
         </label>
 
+        <label className="flex flex-col" htmlFor="name">
+          Name
+          <input
+            id="name"
+            type="text"
+            {...register("name", { required: true })}
+          />
+        </label>
+
         <label className="flex flex-col" htmlFor="password">
           Password
           <input type="password" {...register("password")} />
@@ -60,16 +69,12 @@ export default function Profile({ user }: Props) {
           </p>
         )}
 
-        <button
-          className="mt-2 text-blue-500 hover:underline"
-          type="button"
-          onClick={onClick}
-        >
+        <button className="u-link" type="button" onClick={onClick}>
           Delete my account
         </button>
 
         <div className="space-x-4">
-          <button className="button" type="submit">
+          <button className="u-button" type="submit">
             Submit
           </button>
         </div>

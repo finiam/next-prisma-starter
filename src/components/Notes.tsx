@@ -27,7 +27,7 @@ export default function Notes({ notes: initialNotes }: Props) {
   };
 
   const handleDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    const id = Number(event.currentTarget.dataset.id);
+    const { id } = event.currentTarget.dataset;
 
     deleteNote(id)
       .then(() => setNotes(notes.filter((note) => note.id !== id)))
@@ -67,7 +67,7 @@ export default function Notes({ notes: initialNotes }: Props) {
           type="text"
         />
 
-        <button className="button" type="submit" disabled={submited}>
+        <button className="u-button" type="submit" disabled={submited}>
           Submit
         </button>
       </form>

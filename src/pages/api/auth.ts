@@ -8,29 +8,26 @@ export const config = { rpc: true };
 
 interface UserParams {
   email: string;
+  name: string;
   password: string;
 }
 
-async function createUser(params: UserParams): Promise<User> {
+export async function createUser(params: UserParams): Promise<User> {
   const password = await bcrypt.hash(params.password, 10);
   const user = await prisma.user.create({
     data: { ...params, password },
   });
 
   user.password = "";
+  authenticateUser(user);
 
   return user;
 }
 
-export async function login(params: UserParams) {
-  let user = await prisma.user.findUnique({ where: { email: params.email } });
+export async function login(params: UserParams): Promise<User> {
+  const user = await prisma.user.findUnique({ where: { email: params.email } });
 
-  if (!user) {
-    user = await createUser(params);
-    authenticateUser(user);
-
-    return user;
-  }
+  if (!user) throw new Error(NOT_FOUND_ERROR);
 
   if (await bcrypt.compare(params.password, user.password)) {
     user.password = "";
@@ -42,6 +39,6 @@ export async function login(params: UserParams) {
   throw new Error(NOT_FOUND_ERROR);
 }
 
-export async function logout() {
+export async function logout(): Promise<void> {
   clearUser();
 }

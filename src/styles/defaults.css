@@ -1,7 +1,11 @@
-.button {
+.u-button {
   @apply py-2 px-4 bg-gray-200;
 }
 
-.center {
+.u-link {
+  @apply mt-2 text-blue-500 hover:underline;
+}
+
+.u-center {
   @apply flex flex-col items-center justify-center;
 }

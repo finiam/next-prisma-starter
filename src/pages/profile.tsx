@@ -1,10 +1,9 @@
 import React from "react";
 import { User } from "@prisma/client";
 import superjson from "superjson";
-import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import Login from "root/components/Login";
-import { userFromToken } from "root/lib/tokenUtils";
+import { getCurrentUser } from "root/lib/tokenUtils";
 import Navbar from "root/components/Navbar";
 import Profile from "root/components/Profile";
 import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
@@ -27,9 +26,9 @@ export default function Home({ user }: Props) {
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export async function getServerSideProps() {
   try {
-    const user = await userFromToken(context.req.cookies.auth);
+    const user = await getCurrentUser();
 
     return {
       props: superjson.serialize({

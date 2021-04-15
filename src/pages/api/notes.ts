@@ -12,7 +12,7 @@ export async function listNotes(): Promise<Note[]> {
   return prisma.note.findMany({ where: { userId: user.id } });
 }
 
-export async function deleteNote(id: number) {
+export async function deleteNote(id: string) {
   const user = await getCurrentUser();
 
   return prisma.note.deleteMany({ where: { id, userId: user.id } });
