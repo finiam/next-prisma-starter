@@ -10,7 +10,11 @@ export default function Login() {
   const [error, setError] = useState();
   const refresh = useServerRefresher();
 
-  const onSubmit = async (params: { email: string; password: string }) => {
+  const onSubmit = async (params: {
+    email: string;
+    name: string;
+    password: string;
+  }) => {
     try {
       await login(params);
 
