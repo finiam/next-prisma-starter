@@ -25,7 +25,7 @@ export default function SignUp() {
   return (
     <main>
       <form
-        className="h-screen center flex flex-col items-center"
+        className="h-screen center flex flex-col items-center justify-center"
         onSubmit={handleSubmit(onSubmit)}
       >
         <Head>
