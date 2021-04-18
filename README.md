@@ -29,14 +29,14 @@ The `src/pages/api` directory is mapped to `/api/*`. Files in this directory are
 
 ## Environment
 
-This project start requires two environment variables to work. `DATABASE_URL` and `SECRET_KEY`
+This project start requires two environment variables to work. `DATABASE_URL` and `JWT_TOKEN_KEY`
 
 `DATABASE_URL` should be a URL postgres database, either local or not.
-`SECRET_KEY` is the encryption key used by `bcrypt` for user's passwords.
+`JWT_TOKEN_KEY` is the encryption key used by `bcrypt` for user's passwords.
 
 ## Deploy
 
-This project is ready for deployment on Heroku. Just create a Heroku project and point it to your git repo. Only requirement is setting the `SECRET_KEY` environment variable. If you add the Postgresql addon that will take care of the `DATABASE_URL`
+This project is ready for deployment on Heroku. Just create a Heroku project and point it to your git repo. Only requirement is setting the `JWT_TOKEN_KEY` environment variable. If you add the Postgresql addon that will take care of the `DATABASE_URL`
 
 You can also deploy it on Vercel, as long you setup your Postgresql database somewhere else. I recommend Heroku for now as the round trip times from Vercel to a regular SQL database are a bit big. Also connection management is a issue right now. Stateless functions don't deal well it that. If you want to use Vercel, I'd recommend swaping out Prisma+SQL with FaunaDB for example.
 

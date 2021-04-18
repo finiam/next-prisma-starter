@@ -6,7 +6,7 @@ import { getContext } from "next-rpc/context";
 import prisma from "root/lib/prisma";
 import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
 
-const { SECRET_KEY } = process.env;
+const { JWT_TOKEN_KEY } = process.env;
 const cookieOptions = {
   httpOnly: true,
   maxAge: 2592000,
@@ -32,7 +32,7 @@ export function authenticateUser(user: User): void {
 
   if (!user) return;
 
-  const token = jwt.sign({ email: user.email }, SECRET_KEY, {
+  const token = jwt.sign({ email: user.email }, JWT_TOKEN_KEY, {
     expiresIn: "1d",
   });
 
@@ -53,7 +53,7 @@ export async function userFromToken(token: string): Promise<User> {
   if (!token) return undefined;
 
   try {
-    const data = jwt.verify(token, SECRET_KEY);
+    const data = jwt.verify(token, JWT_TOKEN_KEY);
 
     if (!data) return undefined;
 
