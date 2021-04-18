@@ -3,7 +3,7 @@ import { User } from "@prisma/client";
 import superjson from "superjson";
 import Head from "next/head";
 import Login from "root/components/Login";
-import { getCurrentUser } from "root/lib/tokenUtils";
+import { getCurrentUser } from "root/lib/auth/tokenUtils";
 import Navbar from "root/components/Navbar";
 import Profile from "root/components/Profile";
 import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";

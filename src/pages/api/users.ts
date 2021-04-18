@@ -1,6 +1,6 @@
-import bcrypt from "bcrypt";
 import prisma from "root/lib/prisma";
-import { authenticateUser, getCurrentUser } from "root/lib/tokenUtils";
+import { authenticateUser, getCurrentUser } from "root/lib/auth/tokenUtils";
+import { encryptPassword } from "root/lib/auth/passwordUtils";
 
 export const config = { rpc: true };
 
@@ -12,7 +12,7 @@ interface UserParams {
 export async function updateUser(params: UserParams) {
   const currentUser = await getCurrentUser();
   const password = params.password
-    ? await bcrypt.hash(params.password, 10)
+    ? await encryptPassword(params.password)
     : undefined;
   const user = await prisma.user.update({
     where: { id: currentUser.id },

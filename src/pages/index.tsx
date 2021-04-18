@@ -5,7 +5,7 @@ import Head from "next/head";
 import superjson from "superjson";
 import Login from "root/components/Login";
 import Notes from "root/components/Notes";
-import { userFromToken } from "root/lib/tokenUtils";
+import { userFromToken } from "root/lib/auth/tokenUtils";
 import Navbar from "root/components/Navbar";
 import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
 import { listNotes } from "./api/notes";

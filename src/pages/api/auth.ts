@@ -1,8 +1,8 @@
 import { User } from "@prisma/client";
-import bcrypt from "bcrypt";
 import { NOT_FOUND_ERROR } from "root/lib/errorTypes";
 import prisma from "root/lib/prisma";
-import { authenticateUser, clearUser } from "root/lib/tokenUtils";
+import { authenticateUser, clearUser } from "root/lib/auth/tokenUtils";
+import { encryptPassword, verifyPassword } from "root/lib/auth/passwordUtils";
 
 export const config = { rpc: true };
 
@@ -13,7 +13,7 @@ interface UserParams {
 }
 
 export async function createUser(params: UserParams): Promise<User> {
-  const password = await bcrypt.hash(params.password, 10);
+  const password = await encryptPassword(params.password);
   const user = await prisma.user.create({
     data: { ...params, password },
   });
@@ -29,7 +29,7 @@ export async function login(params: UserParams): Promise<User> {
 
   if (!user) throw new Error(NOT_FOUND_ERROR);
 
-  if (await bcrypt.compare(params.password, user.password)) {
+  if (await verifyPassword(user.password, params.password)) {
     user.password = "";
     authenticateUser(user);
 

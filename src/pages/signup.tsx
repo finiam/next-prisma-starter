@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import { getCurrentUser } from "root/lib/tokenUtils";
+import { getCurrentUser } from "root/lib/auth/tokenUtils";
 import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
 import { useForm } from "react-hook-form";
 import Link from "next/link";

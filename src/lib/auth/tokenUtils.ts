@@ -4,7 +4,7 @@ import { serialize } from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getContext } from "next-rpc/context";
 import prisma from "root/lib/prisma";
-import { UNAUTHENTICATED_ERROR } from "./errorTypes";
+import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
 
 const { SECRET_KEY } = process.env;
 const cookieOptions = {

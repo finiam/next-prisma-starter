@@ -1,4 +1,4 @@
-import { getCurrentUser } from "root/lib/tokenUtils";
+import { getCurrentUser } from "root/lib/auth/tokenUtils";
 import prisma from "root/lib/prisma";
 import { Note } from ".prisma/client";
 
