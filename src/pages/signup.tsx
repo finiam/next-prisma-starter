@@ -63,7 +63,7 @@ export default function SignUp() {
           </label>
 
           <button className="u-button" type="submit">
-            Login
+            Sign Up
           </button>
 
           {error && <p>User exists</p>}
