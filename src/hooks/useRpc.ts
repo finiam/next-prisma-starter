@@ -1,23 +1,25 @@
 import { useState } from "react";
 
-type useRpcReturnType<A, B> = [A, { loading: boolean; data: B; error: any }];
+type useRpcReturnType<A extends (...args: any) => any> = [
+  A,
+  { loading: boolean; data: ReturnType<A>; error: any }
+];
 
-type useRpcOptions<B> = {
+type useRpcOptions<A extends (...args: any) => any> = {
   onError?: (error: any) => any;
-  onSuccess?: (data: B) => any;
+  onSuccess?: (data: ReturnType<A>) => any;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export default function useRpc<A extends Function, B>(
+export default function useRpc<A extends (...args: any) => any>(
   rpcFn: A,
-  options: useRpcOptions<B> = {}
-): useRpcReturnType<A, B> {
+  options: useRpcOptions<ReturnType<A>> = {}
+): useRpcReturnType<A> {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<B>();
+  const [data, setData] = useState<ReturnType<A>>();
   const [error, setError] = useState();
 
   const executor: unknown = async (...args: unknown[]) => {
-    let result: B;
+    let result: ReturnType<A>;
 
     setLoading(true);
 
