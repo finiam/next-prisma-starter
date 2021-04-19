@@ -1,32 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
 import Head from "next/head";
 import { getCurrentUser } from "root/lib/auth/tokenUtils";
 import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import useServerRefresher from "root/hooks/useServerRefresher";
+import useRpc from "root/hooks/useRpc";
 import { createUser } from "./api/auth";
 
 export default function SignUp() {
   const { handleSubmit, register } = useForm();
-  const [error, setError] = useState();
-  const refresh = useServerRefresher();
-
-  const onSubmit = async (params: any) => {
-    try {
-      await createUser(params);
-
-      refresh();
-    } catch (networkError) {
-      setError(networkError);
-    }
-  };
+  const [createUserRpc, { loading, error }] = useRpc(createUser, {
+    onSuccess: useServerRefresher(),
+  });
 
   return (
     <main>
       <form
         className="h-screen center flex flex-col items-center justify-center"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(createUserRpc)}
       >
         <Head>
           <title>Login</title>
@@ -62,7 +54,7 @@ export default function SignUp() {
             />
           </label>
 
-          <button className="u-button" type="submit">
+          <button className="u-button" type="submit" disabled={loading}>
             Sign Up
           </button>
 

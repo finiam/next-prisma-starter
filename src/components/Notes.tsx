@@ -3,6 +3,7 @@ import { Note } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { useErrorHandler } from "react-error-boundary";
 import { createNote, deleteNote } from "root/pages/api/notes";
+import useRpc from "root/hooks/useRpc";
 
 interface Props {
   notes: Note[];
@@ -11,27 +12,25 @@ interface Props {
 export default function Notes({ notes: initialNotes }: Props) {
   const [notes, setNotes] = useState(initialNotes);
   const { handleSubmit, register, setValue } = useForm();
-  const [submited, setSubmited] = useState(false);
-  const handleError = useErrorHandler();
+  const onError = useErrorHandler();
+  const [createNoteRpc, { loading }] = useRpc(createNote, {
+    onError,
+  });
+  const [deleteNoteRpc] = useRpc(deleteNote, { onError });
 
   const handleFormSubmit = async ({ content }) => {
-    setSubmited(true);
-
-    createNote({ content })
-      .then((note) => {
-        setValue("content", "");
-        setSubmited(false);
-        setNotes([...notes, note]);
-      })
-      .catch((error) => handleError(error));
+    createNoteRpc({ content }).then((note) => {
+      setValue("content", "");
+      setNotes([...notes, note]);
+    });
   };
 
   const handleDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
     const { id } = event.currentTarget.dataset;
 
-    deleteNote(id)
-      .then(() => setNotes(notes.filter((note) => note.id !== id)))
-      .catch((error) => handleError(error));
+    deleteNoteRpc(id).then(() =>
+      setNotes(notes.filter((note) => note.id !== id))
+    );
   };
 
   return (
@@ -67,7 +66,7 @@ export default function Notes({ notes: initialNotes }: Props) {
           type="text"
         />
 
-        <button className="u-button" type="submit" disabled={submited}>
+        <button className="u-button" type="submit" disabled={loading}>
           Submit
         </button>
       </form>

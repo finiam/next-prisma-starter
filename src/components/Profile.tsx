@@ -1,39 +1,39 @@
-import React, { useState } from "react";
+import React from "react";
 import { User } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import useServerRefresher from "root/hooks/useServerRefresher";
 import { deleteUser, updateUser } from "root/pages/api/users";
+import useRpc from "root/hooks/useRpc";
 
 interface Props {
   user: User;
 }
 
 export default function Profile({ user }: Props) {
-  const [error, setError] = useState();
   const { register, handleSubmit, formState } = useForm({
     defaultValues: user,
   });
   const refresh = useServerRefresher();
+  const [
+    updateUserRpc,
+    { loading: updatingUser, data: updatedUser, error: updateUserError },
+  ] = useRpc(updateUser, {
+    onSuccess: refresh,
+  });
+  const [
+    deleteUserRpc,
+    { loading: deletingUser, error: deleteUserError },
+  ] = useRpc(deleteUser, {
+    onSuccess: refresh,
+  });
 
-  const onSubmit = async (params) => {
-    try {
-      await updateUser(params);
-      refresh();
-    } catch (networkError) {
-      setError(networkError);
-    }
-  };
+  const handleFormSubmit = (params) => updateUserRpc(params);
 
   const onClick = async () => {
-    try {
-      // eslint-disable-next-line no-restricted-globals, no-alert
-      if (!confirm("Are you sure? Everything will be deleted!")) return;
+    // eslint-disable-next-line no-restricted-globals, no-alert
+    if (!confirm("Are you sure? Everything will be deleted!")) return;
 
-      await deleteUser();
-      refresh();
-    } catch (networkError) {
-      setError(networkError);
-    }
+    await deleteUserRpc();
   };
 
   return (
@@ -42,7 +42,7 @@ export default function Profile({ user }: Props) {
 
       <form
         className="mt-14 max-w-lg space-y-4"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(handleFormSubmit)}
       >
         <label className="flex flex-col" htmlFor="name">
           Email
@@ -63,24 +63,39 @@ export default function Profile({ user }: Props) {
           <input type="password" {...register("password")} />
         </label>
 
-        {error && (
+        {updateUserError && (
           <p className="text-red-500">
             Welp seems that this profile is invalid
           </p>
         )}
 
-        <button className="u-link" type="button" onClick={onClick}>
+        <button
+          className="u-link disabled:opacity-50"
+          type="button"
+          onClick={onClick}
+          disabled={deletingUser}
+        >
           Delete my account
         </button>
 
+        {deleteUserError && (
+          <p className="text-red-500">
+            Welp seems that we can&apos;t delete the account for some reason
+          </p>
+        )}
+
         <div className="space-x-4">
-          <button className="u-button" type="submit">
+          <button
+            className="u-button disabled:opacity-50"
+            type="submit"
+            disabled={updatingUser}
+          >
             Submit
           </button>
         </div>
       </form>
 
-      {formState.isSubmitted && !error && (
+      {formState.isSubmitted && updatedUser && (
         <p className="mt-2">Profile updated! :)</p>
       )}
     </div>

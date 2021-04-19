@@ -29,6 +29,7 @@
     "react-hook-form": "^7.1.0",
     "redaxios": "^0.4.1",
     "superjson": "^1.4.1",
+    "swr": "^0.5.5",
     "tailwindcss": "^2.0.2"
   },
   "devDependencies": {
