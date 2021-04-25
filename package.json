@@ -17,7 +17,7 @@
     "lint": "eslint src --ext ts,tsx,js,jsx"
   },
   "dependencies": {
-    "@prisma/client": "2.21.1",
+    "@prisma/client": "2.21.2",
     "argon2": "^0.27.2",
     "cookie": "^0.4.1",
     "jsonwebtoken": "^8.5.1",

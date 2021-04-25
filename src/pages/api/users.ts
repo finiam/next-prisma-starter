@@ -1,6 +1,7 @@
 import prisma from "root/lib/prisma";
 import { authenticateUser, getCurrentUser } from "root/lib/auth/tokenUtils";
 import { encryptPassword } from "root/lib/auth/passwordUtils";
+import { logRpc } from "root/lib/audit";
 
 export const config = { rpc: true };
 
@@ -10,6 +11,7 @@ interface UserParams {
 }
 
 export async function updateUser(params: UserParams) {
+  await logRpc("createNote", params);
   const currentUser = await getCurrentUser();
   const password = params.password
     ? await encryptPassword(params.password)
@@ -28,6 +30,7 @@ export async function updateUser(params: UserParams) {
 }
 
 export async function deleteUser() {
+  await logRpc("createNote");
   const currentUser = await getCurrentUser();
   const [_, user] = await prisma.$transaction([
     prisma.note.deleteMany({ where: { userId: currentUser.id } }),

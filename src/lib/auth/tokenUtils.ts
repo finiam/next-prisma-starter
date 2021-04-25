@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
-import { User } from "@prisma/client";
 import { serialize } from "cookie";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getContext } from "next-rpc/context";
 import prisma from "root/lib/prisma";
 import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
+import { User } from ".prisma/client";
 
 const { JWT_TOKEN_KEY } = process.env;
 const cookieOptions = {

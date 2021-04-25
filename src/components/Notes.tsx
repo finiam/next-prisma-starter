@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Note } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { useErrorHandler } from "react-error-boundary";
 import { createNote, deleteNote } from "root/pages/api/notes";
 import useRpc from "root/hooks/useRpc";
+import { Note } from ".prisma/client";
 
 interface Props {
   notes: Note[];

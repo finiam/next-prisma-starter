@@ -14,11 +14,13 @@ export default function SignUp() {
     onSuccess: useServerRefresher(),
   });
 
+  const handleCreateUser = (params) => createUserRpc(params);
+
   return (
     <main>
       <form
         className="h-screen center flex flex-col items-center justify-center"
-        onSubmit={handleSubmit(createUserRpc)}
+        onSubmit={handleSubmit(handleCreateUser)}
       >
         <Head>
           <title>Login</title>
