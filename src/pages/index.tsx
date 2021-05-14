@@ -1,18 +1,17 @@
 import React from "react";
+import { User, Note } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import superjson from "superjson";
 import Login from "root/components/Login";
 import Notes from "root/components/Notes";
-import { userFromToken } from "root/lib/auth/tokenUtils";
 import Navbar from "root/components/Navbar";
-import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
-import { User, Note } from ".prisma/client";
-import { listNotes } from "./api/notes";
+import { userFromRequest } from "root/web/tokens";
+import { listNotes } from "lib/notes";
 
 interface Props {
   user?: User;
-  notes: Note[];
+  notes?: Note[];
 }
 
 export default function Home({ user, notes }: Props) {
@@ -30,19 +29,16 @@ export default function Home({ user, notes }: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  try {
-    const user = await userFromToken(context.req.cookies.auth);
-    const notes = await listNotes();
+  const user = await userFromRequest(context.req);
 
-    return {
-      props: superjson.serialize({
-        user,
-        notes,
-      }).json,
-    };
-  } catch (error) {
-    if (error.message === UNAUTHENTICATED_ERROR) return { props: {} };
+  if (!user) return { props: {} };
 
-    throw error;
-  }
+  const notes = await listNotes(user);
+
+  return {
+    props: superjson.serialize({
+      user,
+      notes,
+    }).json,
+  };
 }

@@ -1,31 +1,26 @@
-import { getCurrentUser } from "root/lib/auth/tokenUtils";
-import prisma from "root/lib/prisma";
-import { logRpc } from "root/lib/audit";
-import { Note } from ".prisma/client";
+import { NextApiResponse } from "next";
+import requireLogin, {
+  NextApiRequestWithUser,
+} from "root/middlewares/requireLogin";
+import { createNote, deleteNote, listNotes } from "lib/notes";
+import defaultHandler from "./_defaultHandler";
 
-export const config = { rpc: true };
+const handler = defaultHandler<NextApiRequestWithUser, NextApiResponse>()
+  .use(requireLogin)
+  .get(async (req, res) => {
+    const notes = await listNotes(req.currentUser);
 
-export async function listNotes(): Promise<Note[]> {
-  await logRpc("listNotes");
-  const user = await getCurrentUser();
+    res.json(notes);
+  })
+  .post(async (req, res) => {
+    const note = await createNote(req.currentUser, req.body);
 
-  if (!user) return null;
+    res.json(note);
+  })
+  .delete(async (req, res) => {
+    await deleteNote(req.currentUser, req.query.id as string);
 
-  return prisma.note.findMany({ where: { userId: user.id } });
-}
-
-export async function deleteNote(id: string) {
-  await logRpc("deleteNotes", { id });
-  const user = await getCurrentUser();
-
-  return prisma.note.deleteMany({ where: { id, userId: user.id } });
-}
-
-export async function createNote(noteParams: { content: string }) {
-  await logRpc("createNote", noteParams);
-  const user = await getCurrentUser();
-
-  return prisma.note.create({
-    data: { ...noteParams, user: { connect: { id: user.id } } },
+    res.send("");
   });
-}
+
+export default handler;

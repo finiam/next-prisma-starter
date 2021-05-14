@@ -6,13 +6,9 @@ if (!process.env.JWT_TOKEN_KEY) {
   process.exit(-1);
 }
 
-const withRpc = require("next-rpc")({
-  experimentalContext: true,
-});
-
-module.exports = withRpc({
+module.exports = {
   target: process.env.NEXT_TARGET,
   future: {
     webpack5: true,
   },
-});
+};

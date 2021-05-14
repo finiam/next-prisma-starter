@@ -1,8 +1,8 @@
 import React from "react";
 import Link from "next/link";
+import { User } from "@prisma/client";
 import useServerRefresher from "root/hooks/useServerRefresher";
-import { logout } from "root/pages/api/auth";
-import { User } from ".prisma/client";
+import { logout } from "root/web/apiRoutes";
 
 interface Props {
   user: User;
@@ -13,6 +13,7 @@ export default function Navbar({ user }: Props) {
 
   const onLogout = async () => {
     await logout();
+
     refresh();
   };
 

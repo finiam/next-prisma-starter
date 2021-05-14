@@ -1,19 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 
-type useRpcReturnType<A extends (...args: any) => any> = [
+type NetworkResourceReturnType<A extends (...args: any) => any> = [
   A,
   { loading: boolean; data: ReturnType<A>; error: any }
 ];
 
-type useRpcOptions<A extends (...args: any) => any> = {
+type NetworkResourceOptions<A extends (...args: any) => any> = {
   onError?: (error: any) => any;
   onSuccess?: (data: ReturnType<A>) => any;
 };
 
-export default function useRpc<A extends (...args: any) => any>(
-  rpcFn: A,
-  options: useRpcOptions<ReturnType<A>> = {}
-): useRpcReturnType<A> {
+export default function useNetworkResource<A extends (...args: any) => any>(
+  fn: A,
+  options: NetworkResourceOptions<ReturnType<A>> = {}
+): NetworkResourceReturnType<A> {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ReturnType<A>>();
   const [error, setError] = useState();
@@ -24,7 +25,7 @@ export default function useRpc<A extends (...args: any) => any>(
     setLoading(true);
 
     try {
-      result = await rpcFn(...args);
+      result = await fn(...args);
 
       setData(result);
 

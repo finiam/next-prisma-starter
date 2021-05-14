@@ -1,10 +1,10 @@
+import { User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
-import { NextApiRequest, NextApiResponse } from "next";
-import { getContext } from "next-rpc/context";
-import prisma from "root/lib/prisma";
-import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
-import { User } from ".prisma/client";
+import { NextApiResponse } from "next";
+import prisma from "lib/prisma";
+import { NextApiRequestCookies } from "next/dist/next-server/server/api-utils";
+import { IncomingMessage } from "http";
 
 const { JWT_TOKEN_KEY } = process.env;
 const cookieOptions = {
@@ -27,9 +27,7 @@ export function setCookie(
   res.setHeader("Set-Cookie", serialize(name, String(stringValue), options));
 }
 
-export function authenticateUser(user: User): void {
-  const { res } = getContext();
-
+export function authenticateUser(res: NextApiResponse, user: User): void {
   if (!user) return;
 
   const token = jwt.sign({ email: user.email }, JWT_TOKEN_KEY, {
@@ -39,9 +37,7 @@ export function authenticateUser(user: User): void {
   setCookie(res, "auth", token, cookieOptions);
 }
 
-export function clearUser(): void {
-  const { res } = getContext();
-
+export function clearUser(res: NextApiResponse): void {
   setCookie(res, "auth", "0", {
     ...cookieOptions,
     path: "/",
@@ -49,7 +45,11 @@ export function clearUser(): void {
   });
 }
 
-export async function userFromToken(token: string): Promise<User> {
+export async function userFromRequest(
+  req: IncomingMessage & { cookies: NextApiRequestCookies }
+): Promise<User> {
+  const { auth: token } = req.cookies;
+
   if (!token) return undefined;
 
   try {
@@ -67,29 +67,4 @@ export async function userFromToken(token: string): Promise<User> {
   } catch (error) {
     return undefined;
   }
-}
-
-export async function ensureAuthenticated(
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<User | undefined> {
-  const user = await userFromToken(req.cookies.auth);
-
-  if (!user) {
-    res.status(404).end("");
-    res.end();
-
-    return undefined;
-  }
-
-  return user;
-}
-
-export async function getCurrentUser(): Promise<User> {
-  const { req } = getContext();
-  const user = await userFromToken((req as any).cookies.auth);
-
-  if (!user) throw new Error(UNAUTHENTICATED_ERROR);
-
-  return user;
 }

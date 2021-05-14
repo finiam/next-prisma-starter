@@ -25,7 +25,7 @@ You can start editing the page by modifying `src/pages/index.js`. The page auto-
 
 [API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/](http://localhost:3000/api). This endpoints can be edited in `src/pages/api`.
 
-The `src/pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+The `src/pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages. We use `next-connect` so we can better write "controller-like" API route files.
 
 ## Environment
 

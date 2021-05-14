@@ -1,9 +1,9 @@
 import React from "react";
+import { User } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import useServerRefresher from "root/hooks/useServerRefresher";
-import { deleteUser, updateUser } from "root/pages/api/users";
-import useRpc from "root/hooks/useRpc";
-import { User } from ".prisma/client";
+import useNetworkResource from "root/hooks/useNetworkResource";
+import { deleteUser, updateUser } from "root/web/apiRoutes";
 
 interface Props {
   user: User;
@@ -15,25 +15,23 @@ export default function Profile({ user }: Props) {
   });
   const refresh = useServerRefresher();
   const [
-    updateUserRpc,
+    updateUserApi,
     { loading: updatingUser, data: updatedUser, error: updateUserError },
-  ] = useRpc(updateUser, {
+  ] = useNetworkResource(updateUser, {
     onSuccess: refresh,
   });
-  const [
-    deleteUserRpc,
-    { loading: deletingUser, error: deleteUserError },
-  ] = useRpc(deleteUser, {
-    onSuccess: refresh,
-  });
+  const [deleteUserApi, { loading: deletingUser, error: deleteUserError }] =
+    useNetworkResource(deleteUser, {
+      onSuccess: refresh,
+    });
 
-  const handleFormSubmit = (params) => updateUserRpc(params);
+  const handleFormSubmit = (params) => updateUserApi(params);
 
   const onClick = async () => {
     // eslint-disable-next-line no-restricted-globals, no-alert
     if (!confirm("Are you sure? Everything will be deleted!")) return;
 
-    await deleteUserRpc();
+    await deleteUserApi();
   };
 
   return (

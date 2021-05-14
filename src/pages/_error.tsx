@@ -10,6 +10,4 @@ export default function ErrorPage({ error }) {
   return <Error error={error} resetErrorBoundary={onReset} />;
 }
 
-ErrorPage.getInitialProps = ({ err }) => {
-  return { error: err };
-};
+ErrorPage.getInitialProps = ({ err }) => ({ error: err });

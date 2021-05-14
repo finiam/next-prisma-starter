@@ -1,20 +1,20 @@
 import React from "react";
 import Head from "next/head";
-import { getCurrentUser } from "root/lib/auth/tokenUtils";
-import { UNAUTHENTICATED_ERROR } from "root/lib/errorTypes";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import { GetServerSidePropsContext } from "next";
 import useServerRefresher from "root/hooks/useServerRefresher";
-import useRpc from "root/hooks/useRpc";
-import { createUser } from "./api/auth";
+import useNetworkResource from "root/hooks/useNetworkResource";
+import { userFromRequest } from "root/web/tokens";
+import { createUser } from "root/web/apiRoutes";
 
 export default function SignUp() {
   const { handleSubmit, register } = useForm();
-  const [createUserRpc, { loading, error }] = useRpc(createUser, {
+  const [createUserApi, { loading, error }] = useNetworkResource(createUser, {
     onSuccess: useServerRefresher(),
   });
 
-  const handleCreateUser = (params) => createUserRpc(params);
+  const handleCreateUser = (params) => createUserApi(params);
 
   return (
     <main>
@@ -73,23 +73,19 @@ export default function SignUp() {
   );
 }
 
-export async function getServerSideProps() {
-  try {
-    await getCurrentUser();
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const user = await userFromRequest(context.req);
 
+  if (user) {
     return {
       redirect: {
         destination: "/",
         permanent: false,
       },
     };
-  } catch (error) {
-    if (error.message === UNAUTHENTICATED_ERROR) {
-      return {
-        props: {},
-      };
-    }
-
-    throw error;
   }
+
+  return {
+    props: {},
+  };
 }

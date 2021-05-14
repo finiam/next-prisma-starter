@@ -1,43 +1,34 @@
-import prisma from "root/lib/prisma";
-import { authenticateUser, getCurrentUser } from "root/lib/auth/tokenUtils";
-import { encryptPassword } from "root/lib/auth/passwordUtils";
-import { logRpc } from "root/lib/audit";
+import { NextApiRequest, NextApiResponse } from "next";
+import { deleteUser, updateUser } from "lib/users";
+import { authenticateUser, userFromRequest } from "root/web/tokens";
+import { createUser } from "lib/auth";
+import defaultHandler from "./_defaultHandler";
 
-export const config = { rpc: true };
+const handler = defaultHandler<NextApiRequest, NextApiResponse>()
+  .post(async (req, res) => {
+    const user = await createUser(req.body);
 
-interface UserParams {
-  email: string;
-  password: string;
-}
+    authenticateUser(res, user);
+    res.json(user);
+  })
+  .put(async (req, res) => {
+    const currentUser = await userFromRequest(req);
 
-export async function updateUser(params: UserParams) {
-  await logRpc("createNote", params);
-  const currentUser = await getCurrentUser();
-  const password = params.password
-    ? await encryptPassword(params.password)
-    : undefined;
-  const user = await prisma.user.update({
-    where: { id: currentUser.id },
-    data: { ...params, password },
+    if (currentUser) {
+      const updatedUser = await updateUser(currentUser, req.body);
+
+      authenticateUser(res, updatedUser);
+      res.json(updatedUser);
+    } else res.status(401).json({ error: "unauthenticated" });
+  })
+  .delete(async (req, res) => {
+    const currentUser = await userFromRequest(req);
+
+    if (currentUser) {
+      await deleteUser(currentUser);
+
+      res.send("");
+    } else res.status(401).json({ error: "unauthenticated" });
   });
 
-  if (user) {
-    authenticateUser(user);
-    user.password = "";
-  }
-
-  return user;
-}
-
-export async function deleteUser() {
-  await logRpc("createNote");
-  const currentUser = await getCurrentUser();
-  const [_, user] = await prisma.$transaction([
-    prisma.note.deleteMany({ where: { userId: currentUser.id } }),
-    prisma.user.delete({ where: { id: currentUser.id } }),
-  ]);
-
-  if (user) user.password = "";
-
-  return user;
-}
+export default handler;

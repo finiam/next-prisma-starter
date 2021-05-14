@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import { Note } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { useErrorHandler } from "react-error-boundary";
-import { createNote, deleteNote } from "root/pages/api/notes";
-import useRpc from "root/hooks/useRpc";
-import { Note } from ".prisma/client";
+import useNetworkResource from "root/hooks/useNetworkResource";
+import { createNote, deleteNote } from "root/web/apiRoutes";
 
 interface Props {
   notes: Note[];
@@ -13,22 +13,22 @@ export default function Notes({ notes: initialNotes }: Props) {
   const [notes, setNotes] = useState(initialNotes);
   const { handleSubmit, register, setValue } = useForm();
   const onError = useErrorHandler();
-  const [createNoteRpc, { loading }] = useRpc(createNote, {
+  const [createNoteApi, { loading }] = useNetworkResource(createNote, {
     onError,
   });
-  const [deleteNoteRpc] = useRpc(deleteNote, { onError });
+  const [deleteNoteApi] = useNetworkResource(deleteNote, { onError });
 
   const handleFormSubmit = async ({ content }) => {
-    createNoteRpc({ content }).then((note) => {
+    createNoteApi({ content }).then((response) => {
       setValue("content", "");
-      setNotes([...notes, note]);
+      setNotes([...notes, response.data]);
     });
   };
 
   const handleDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
     const { id } = event.currentTarget.dataset;
 
-    deleteNoteRpc(id).then(() =>
+    deleteNoteApi(id).then(() =>
       setNotes(notes.filter((note) => note.id !== id))
     );
   };

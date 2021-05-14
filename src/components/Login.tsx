@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
+import redaxios from "redaxios";
 import useServerRefresher from "root/hooks/useServerRefresher";
-import { login } from "root/pages/api/auth";
 import Link from "next/link";
 
 export default function Login() {
@@ -16,7 +16,7 @@ export default function Login() {
     password: string;
   }) => {
     try {
-      await login(params);
+      await redaxios.post("/api/sessions", params);
 
       refresh();
     } catch (networkError) {
