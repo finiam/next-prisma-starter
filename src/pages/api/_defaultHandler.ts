@@ -1,3 +1,4 @@
+import { NextApiResponse } from "next";
 import nextConnect from "next-connect";
 import logger from "root/middlewares/logger";
 
@@ -7,7 +8,9 @@ export default function defaultHandler<ReqType, ResType>() {
     onError: (err, req, res) => {
       console.error(err);
 
-      res.status(500).json({ error: "Internal Server Error" });
+      (res as unknown as NextApiResponse)
+        .status(500)
+        .json({ error: "Internal Server Error" });
     },
   }).use(logger);
 }
