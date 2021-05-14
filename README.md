@@ -56,3 +56,10 @@ To learn more about Next.js, take a look at the following resources:
 ## Contributing
 
 Contributions are welcome.
+
+## About
+
+This starter kit is developed and maintained by Finiam.
+
+Leave potential improvements and suggestions as issues on Github. Anything else reach us via [email](mailto:contact@finiam.com).
+
