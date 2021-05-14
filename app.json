@@ -1,0 +1,8 @@
+{
+  "addons": ["heroku-postgresql:hobby-dev"],
+  "env": {
+    "JWT_TOKEN_KEY": {
+      "generator": "secret"
+    }
+  }
+}
