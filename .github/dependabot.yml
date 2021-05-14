@@ -1,0 +1,18 @@
+version: 2
+updates:
+- package-ecosystem: mix
+  directory: "/"
+  schedule:
+    interval: weekly
+    day: friday
+    time: "14:00"
+    timezone: Europe/Lisbon
+  open-pull-requests-limit: 10
+- package-ecosystem: npm
+  directory: "/frontend"
+  schedule:
+    interval: weekly
+    day: friday
+    time: "14:00"
+    timezone: Europe/Lisbon
+  open-pull-requests-limit: 10
