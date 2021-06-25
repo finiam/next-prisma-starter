@@ -7,6 +7,7 @@ import useServerRefresher from "src/hooks/useServerRefresher";
 import { login } from "src/web/apiRoutes";
 
 export default function Login() {
+  const refresh = useServerRefresher();
   const {
     handleSubmit,
     register,
@@ -17,7 +18,7 @@ export default function Login() {
     isError,
     mutate: loginMutation,
   } = useMutation(login, {
-    onSuccess: useServerRefresher(),
+    onSuccess: refresh,
   });
 
   const onSubmit = async (params) => loginMutation(params);

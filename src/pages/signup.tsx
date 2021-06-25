@@ -9,6 +9,7 @@ import { userFromRequest } from "src/web/tokens";
 import { createUser } from "src/web/apiRoutes";
 
 export default function SignUp() {
+  const refresh = useServerRefresher();
   const {
     handleSubmit,
     register,
@@ -19,7 +20,7 @@ export default function SignUp() {
     isError,
     mutate: createUserMutation,
   } = useMutation(createUser, {
-    onSuccess: useServerRefresher(),
+    onSuccess: refresh,
   });
 
   const handleCreateUser = (params) => createUserMutation(params);

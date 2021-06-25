@@ -1,18 +1,31 @@
-import React from "react";
-import { ErrorBoundary } from "react-error-boundary";
+import React, { useMemo } from "react";
+import { ErrorBoundary, useErrorHandler } from "react-error-boundary";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Error from "src/components/Error";
 import "tailwindcss/tailwind.css";
 import "src/styles/defaults.css";
 
-const queryClient = new QueryClient();
+function InnerApp({ Component, pageProps }) {
+  const onError = useErrorHandler();
+  const queryClient = useMemo(
+    () =>
+      new QueryClient({
+        defaultOptions: { mutations: { onError }, queries: { onError } },
+      }),
+    [onError]
+  );
 
-export default function App({ Component, pageProps }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Component {...pageProps} />
+    </QueryClientProvider>
+  );
+}
+
+export default function App(props) {
   return (
     <ErrorBoundary FallbackComponent={Error}>
-      <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
-      </QueryClientProvider>
+      <InnerApp {...props} />
     </ErrorBoundary>
   );
 }
