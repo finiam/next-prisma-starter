@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { deleteUser, updateUser } from "lib/users";
-import { authenticateUser, userFromRequest } from "root/web/tokens";
-import { createUser } from "lib/auth";
+import { createUser, deleteUser, updateUser } from "lib/users";
+import { authenticateUser, userFromRequest } from "src/web/tokens";
 import defaultHandler from "./_defaultHandler";
 
 const handler = defaultHandler<NextApiRequest, NextApiResponse>()

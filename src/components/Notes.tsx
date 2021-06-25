@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Note } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { useErrorHandler } from "react-error-boundary";
-import useNetworkResource from "root/hooks/useNetworkResource";
-import { createNote, deleteNote } from "root/web/apiRoutes";
+import useNetworkResource from "src/hooks/useNetworkResource";
+import { createNote, deleteNote } from "src/web/apiRoutes";
 
 interface Props {
   notes: Note[];

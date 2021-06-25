@@ -15,7 +15,7 @@ const cookieOptions = {
   secure: process.env.NODE_ENV === "production",
 };
 
-export function setCookie(
+function setCookie(
   res: any,
   name: string,
   value: string,

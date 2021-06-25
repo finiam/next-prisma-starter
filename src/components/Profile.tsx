@@ -1,9 +1,9 @@
 import React from "react";
 import { User } from "@prisma/client";
 import { useForm } from "react-hook-form";
-import useServerRefresher from "root/hooks/useServerRefresher";
-import useNetworkResource from "root/hooks/useNetworkResource";
-import { deleteUser, updateUser } from "root/web/apiRoutes";
+import useServerRefresher from "src/hooks/useServerRefresher";
+import useNetworkResource from "src/hooks/useNetworkResource";
+import { deleteUser, updateUser } from "src/web/apiRoutes";
 
 interface Props {
   user: User;

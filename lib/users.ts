@@ -2,18 +2,37 @@ import { User } from "@prisma/client";
 import prisma from "lib/prisma";
 import { encryptPassword } from "lib/auth/passwordUtils";
 
-interface UserParams {
+export interface UserParams {
   email: string;
+  name: string;
   password: string;
 }
 
-export async function updateUser(user: User, params: UserParams) {
-  const password = params.password
-    ? await encryptPassword(params.password)
+export async function createUser({
+  email,
+  name,
+  password,
+}: UserParams): Promise<User> {
+  const encryptedPassword = await encryptPassword(password);
+  const user = await prisma.user.create({
+    data: { email, name, password: encryptedPassword },
+  });
+
+  user.password = "";
+
+  return user;
+}
+
+export async function updateUser(
+  user: User,
+  { email, name, password }: UserParams
+) {
+  const encryptedPassword = password
+    ? await encryptPassword(password)
     : undefined;
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
-    data: { ...params, password },
+    data: { email, name, password: encryptedPassword },
   });
 
   if (updatedUser) {

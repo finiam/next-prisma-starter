@@ -8,7 +8,4 @@ if (!process.env.JWT_TOKEN_KEY) {
 
 module.exports = {
   target: process.env.NEXT_TARGET,
-  future: {
-    webpack5: true,
-  },
 };

@@ -1,28 +1,26 @@
-import React, { useState } from "react";
+import React from "react";
 import Head from "next/head";
 import { useForm } from "react-hook-form";
-import redaxios from "redaxios";
-import useServerRefresher from "root/hooks/useServerRefresher";
+import { useMutation } from "react-query";
 import Link from "next/link";
+import useServerRefresher from "src/hooks/useServerRefresher";
+import { login } from "src/web/apiRoutes";
 
 export default function Login() {
-  const { handleSubmit, register } = useForm();
-  const [error, setError] = useState();
-  const refresh = useServerRefresher();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm();
+  const {
+    isLoading,
+    isError,
+    mutate: loginMutation,
+  } = useMutation(login, {
+    onSuccess: useServerRefresher(),
+  });
 
-  const onSubmit = async (params: {
-    email: string;
-    name: string;
-    password: string;
-  }) => {
-    try {
-      await redaxios.post("/api/sessions", params);
-
-      refresh();
-    } catch (networkError) {
-      setError(networkError);
-    }
-  };
+  const onSubmit = async (params) => loginMutation(params);
 
   return (
     <form
@@ -38,7 +36,7 @@ export default function Login() {
 
         <label className="flex flex-col" htmlFor="email">
           Email
-          <input type="email" {...register("email", { required: true })} />
+          <input type="text" {...register("email", { required: true })} />
         </label>
 
         <label className="flex flex-col" htmlFor="password">
@@ -49,11 +47,15 @@ export default function Login() {
           />
         </label>
 
-        <button className="u-button" type="submit">
+        <button
+          className="u-button"
+          type="submit"
+          disabled={Object.keys(errors).length > 0 || isLoading}
+        >
           Login
         </button>
 
-        {error && <p>User password combination not found</p>}
+        {isError && <p>User password combination not found</p>}
 
         <Link href="/signup">
           <a className="block underline" href="/signup">
