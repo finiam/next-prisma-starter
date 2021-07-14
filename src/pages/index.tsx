@@ -3,10 +3,10 @@ import { User, Note } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import superjson from "superjson";
-import Login from "root/components/Login";
-import Notes from "root/components/Notes";
-import Navbar from "root/components/Navbar";
-import { userFromRequest } from "root/web/tokens";
+import Login from "src/components/Login";
+import Notes from "src/components/Notes";
+import Navbar from "src/components/Navbar";
+import { userFromRequest } from "src/web/tokens";
 import { listNotes } from "lib/notes";
 
 interface Props {

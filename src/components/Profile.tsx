@@ -1,9 +1,9 @@
 import React from "react";
 import { User } from "@prisma/client";
 import { useForm } from "react-hook-form";
-import useServerRefresher from "root/hooks/useServerRefresher";
-import useNetworkResource from "root/hooks/useNetworkResource";
-import { deleteUser, updateUser } from "root/web/apiRoutes";
+import useServerRefresher from "src/hooks/useServerRefresher";
+import { deleteUser, updateUser } from "src/web/apiRoutes";
+import { useMutation } from "react-query";
 
 interface Props {
   user: User;
@@ -14,16 +14,21 @@ export default function Profile({ user }: Props) {
     defaultValues: user,
   });
   const refresh = useServerRefresher();
-  const [
-    updateUserApi,
-    { loading: updatingUser, data: updatedUser, error: updateUserError },
-  ] = useNetworkResource(updateUser, {
+  const {
+    isLoading: updatingUser,
+    data: updatedUser,
+    error: updateUserError,
+    mutate: updateUserApi,
+  } = useMutation(updateUser, {
     onSuccess: refresh,
   });
-  const [deleteUserApi, { loading: deletingUser, error: deleteUserError }] =
-    useNetworkResource(deleteUser, {
-      onSuccess: refresh,
-    });
+  const {
+    isLoading: deletingUser,
+    error: deleteUserError,
+    mutate: deleteUserApi,
+  } = useMutation(deleteUser, {
+    onSuccess: refresh,
+  });
 
   const handleFormSubmit = (params) => updateUserApi(params);
 

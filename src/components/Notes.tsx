@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Note } from "@prisma/client";
 import { useForm } from "react-hook-form";
-import { useErrorHandler } from "react-error-boundary";
-import useNetworkResource from "root/hooks/useNetworkResource";
-import { createNote, deleteNote } from "root/web/apiRoutes";
+import { useMutation } from "react-query";
+import { createNote, deleteNote } from "src/web/apiRoutes";
 
 interface Props {
   notes: Note[];
@@ -12,25 +11,26 @@ interface Props {
 export default function Notes({ notes: initialNotes }: Props) {
   const [notes, setNotes] = useState(initialNotes);
   const { handleSubmit, register, setValue } = useForm();
-  const onError = useErrorHandler();
-  const [createNoteApi, { loading }] = useNetworkResource(createNote, {
-    onError,
+  const { mutate: createNoteMutation, isLoading: createNoteIsLoading } =
+    useMutation(createNote, {
+      onSuccess: (response) => {
+        setValue("content", "");
+        setNotes([...notes, response.data]);
+      },
+    });
+  const { mutate: deleteNoteMutation } = useMutation(deleteNote, {
+    onSuccess: (_response, id) =>
+      setNotes(notes.filter((note) => note.id !== id)),
   });
-  const [deleteNoteApi] = useNetworkResource(deleteNote, { onError });
 
   const handleFormSubmit = async ({ content }) => {
-    createNoteApi({ content }).then((response) => {
-      setValue("content", "");
-      setNotes([...notes, response.data]);
-    });
+    createNoteMutation({ content });
   };
 
   const handleDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
     const { id } = event.currentTarget.dataset;
 
-    deleteNoteApi(id).then(() =>
-      setNotes(notes.filter((note) => note.id !== id))
-    );
+    deleteNoteMutation(id);
   };
 
   return (
@@ -66,7 +66,11 @@ export default function Notes({ notes: initialNotes }: Props) {
           type="text"
         />
 
-        <button className="u-button" type="submit" disabled={loading}>
+        <button
+          className="u-button"
+          type="submit"
+          disabled={createNoteIsLoading}
+        >
           Submit
         </button>
       </form>

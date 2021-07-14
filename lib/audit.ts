@@ -1,7 +1,7 @@
 import { AuditEvent } from "@prisma/client";
 import { NextApiRequest } from "next";
 import omit from "lodash/omit";
-import { userFromRequest } from "root/web/tokens";
+import { userFromRequest } from "src/web/tokens";
 import prisma from "./prisma";
 
 export const FILTERED_PARAMS = ["password"];

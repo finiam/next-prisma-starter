@@ -1,7 +1,7 @@
 import { NextApiResponse } from "next";
 import requireLogin, {
   NextApiRequestWithUser,
-} from "root/middlewares/requireLogin";
+} from "src/middlewares/requireLogin";
 import { createNote, deleteNote, listNotes } from "lib/notes";
 import defaultHandler from "./_defaultHandler";
 

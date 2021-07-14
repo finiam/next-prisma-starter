@@ -1,8 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import { User } from "@prisma/client";
-import useServerRefresher from "root/hooks/useServerRefresher";
-import { logout } from "root/web/apiRoutes";
+import useServerRefresher from "src/hooks/useServerRefresher";
+import { logout } from "src/web/apiRoutes";
 
 interface Props {
   user: User;

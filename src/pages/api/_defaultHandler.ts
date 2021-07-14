@@ -1,6 +1,6 @@
 import { NextApiResponse } from "next";
 import nextConnect from "next-connect";
-import logger from "root/middlewares/logger";
+import logger from "src/middlewares/logger";
 
 export default function defaultHandler<ReqType, ResType>() {
   return nextConnect<ReqType, ResType>({

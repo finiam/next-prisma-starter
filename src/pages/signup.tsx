@@ -3,18 +3,27 @@ import Head from "next/head";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { GetServerSidePropsContext } from "next";
-import useServerRefresher from "root/hooks/useServerRefresher";
-import useNetworkResource from "root/hooks/useNetworkResource";
-import { userFromRequest } from "root/web/tokens";
-import { createUser } from "root/web/apiRoutes";
+import { useMutation } from "react-query";
+import useServerRefresher from "src/hooks/useServerRefresher";
+import { userFromRequest } from "src/web/tokens";
+import { createUser } from "src/web/apiRoutes";
 
 export default function SignUp() {
-  const { handleSubmit, register } = useForm();
-  const [createUserApi, { loading, error }] = useNetworkResource(createUser, {
-    onSuccess: useServerRefresher(),
+  const refresh = useServerRefresher();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm();
+  const {
+    isLoading,
+    isError,
+    mutate: createUserMutation,
+  } = useMutation(createUser, {
+    onSuccess: refresh,
   });
 
-  const handleCreateUser = (params) => createUserApi(params);
+  const handleCreateUser = (params) => createUserMutation(params);
 
   return (
     <main>
@@ -23,7 +32,7 @@ export default function SignUp() {
         onSubmit={handleSubmit(handleCreateUser)}
       >
         <Head>
-          <title>Login</title>
+          <title>Sign Up</title>
         </Head>
 
         <div className="space-y-8">
@@ -56,11 +65,15 @@ export default function SignUp() {
             />
           </label>
 
-          <button className="u-button" type="submit" disabled={loading}>
+          <button
+            className="u-button"
+            type="submit"
+            disabled={Object.keys(errors).length > 0 || isLoading}
+          >
             Sign Up
           </button>
 
-          {error && <p>User exists</p>}
+          {isError && <p>User exists</p>}
 
           <Link href="/">
             <a className="block underline" href="/">

@@ -1,25 +1,14 @@
 import { User } from "@prisma/client";
 import prisma from "lib/prisma";
-import { encryptPassword, verifyPassword } from "./passwordUtils";
+import { verifyPassword } from "./passwordUtils";
 
-interface UserParams {
+export interface LoginParams {
   email: string;
-  name: string;
   password: string;
 }
 
-export async function createUser(params: UserParams): Promise<User> {
-  const password = await encryptPassword(params.password);
-  const user = await prisma.user.create({
-    data: { ...params, password },
-  });
-
-  user.password = "";
-
-  return user;
-}
-
-export async function login(params: UserParams): Promise<User> {
+// eslint-disable-next-line import/prefer-default-export
+export async function login(params: LoginParams): Promise<User> {
   const user = await prisma.user.findUnique({ where: { email: params.email } });
 
   if (!user) return null;

@@ -1,6 +1,6 @@
 import { User } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { userFromRequest } from "root/web/tokens";
+import { userFromRequest } from "src/web/tokens";
 
 export interface NextApiRequestWithUser extends NextApiRequest {
   currentUser: User;

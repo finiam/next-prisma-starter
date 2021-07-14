@@ -3,10 +3,10 @@ import { User } from "@prisma/client";
 import superjson from "superjson";
 import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import Login from "root/components/Login";
-import Navbar from "root/components/Navbar";
-import Profile from "root/components/Profile";
-import { userFromRequest } from "root/web/tokens";
+import Login from "src/components/Login";
+import Navbar from "src/components/Navbar";
+import Profile from "src/components/Profile";
+import { userFromRequest } from "src/web/tokens";
 
 interface Props {
   user?: User;
