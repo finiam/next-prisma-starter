@@ -1,10 +1,9 @@
 import React from "react";
 import Head from "next/head";
-import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { useMutation } from "graphql-hooks";
 import useServerRefresher from "src/hooks/useServerRefresher";
-import { login } from "src/web/apiRoutes";
 
 export default function Login() {
   const refresh = useServerRefresher();
@@ -12,16 +11,26 @@ export default function Login() {
     handleSubmit,
     register,
     formState: { errors },
+    setError,
   } = useForm();
-  const {
-    isLoading,
-    isError,
-    mutate: loginMutation,
-  } = useMutation(login, {
-    onSuccess: refresh,
-  });
+  const [loginMutation, loginMutationState] = useMutation(`
+    mutation Login($email: String!, $password: String!) {
+      login(email: $email, password: $password) {
+        id
+        name
+        email
+      }
+    }
+  `);
 
-  const onSubmit = async (params) => loginMutation(params);
+  const onSubmit = async (params) => {
+    const response = await loginMutation({ variables: params });
+
+    if (response.data.login) refresh();
+    else {
+      setError("loginStatus", { message: "failed" });
+    }
+  };
 
   return (
     <form
@@ -51,12 +60,16 @@ export default function Login() {
         <button
           className="u-button"
           type="submit"
-          disabled={Object.keys(errors).length > 0 || isLoading}
+          disabled={
+            Object.keys(errors).length > 0 || loginMutationState.loading
+          }
         >
           Login
         </button>
 
-        {isError && <p>User password combination not found</p>}
+        {(loginMutationState.error || Object.keys(errors).length > 0) && (
+          <p>User password combination not found</p>
+        )}
 
         <Link href="/signup">
           <a className="block underline" href="/signup">

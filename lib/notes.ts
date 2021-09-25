@@ -7,8 +7,10 @@ export async function listNotes(user: User): Promise<Note[]> {
   return prisma.note.findMany({ where: { userId: user.id } });
 }
 
-export async function deleteNote(user: User, id: string) {
-  return prisma.note.deleteMany({ where: { id, userId: user.id } });
+export async function deleteNote(user: User, id: string): Promise<boolean> {
+  return (
+    (await prisma.note.deleteMany({ where: { id, userId: user.id } })).count > 1
+  );
 }
 
 export async function createNote(user: User, noteParams: { content: string }) {
