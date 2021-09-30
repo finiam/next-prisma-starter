@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
 import { NextApiResponse } from "next";
 import prisma from "lib/prisma";
-import { NextApiRequestCookies } from "next/dist/next-server/server/api-utils";
 import { IncomingMessage } from "http";
+import { NextApiRequestCookies } from "next/dist/server/api-utils";
 
 const { JWT_TOKEN_KEY } = process.env;
 const cookieOptions = {
