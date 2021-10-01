@@ -2,41 +2,47 @@ import React from "react";
 import { User } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import useServerRefresher from "src/hooks/useServerRefresher";
-import { deleteUser, updateUser } from "src/web/apiRoutes";
-import { useMutation } from "react-query";
+import { useMutation } from "graphql-hooks";
 
 interface Props {
   user: User;
 }
 
 export default function Profile({ user }: Props) {
+  const refresh = useServerRefresher();
   const { register, handleSubmit, formState } = useForm({
     defaultValues: user,
   });
-  const refresh = useServerRefresher();
-  const {
-    isLoading: updatingUser,
-    data: updatedUser,
-    error: updateUserError,
-    mutate: updateUserApi,
-  } = useMutation(updateUser, {
-    onSuccess: refresh,
-  });
-  const {
-    isLoading: deletingUser,
-    error: deleteUserError,
-    mutate: deleteUserApi,
-  } = useMutation(deleteUser, {
-    onSuccess: refresh,
-  });
+  const [updateUserMutation, updateUserMutationState] = useMutation(`
+    mutation UpdateUser($email: String!, $name: String!, $password: String!) {
+      updateUser(email: $email, name: $name, password: $password) {
+        id
+        name
+        email
+      }
+    }
+  `);
+  const [deleteUserMutation, deleteUserMutationState] = useMutation(`
+    mutation DeleteUser {
+      deleteUser {
+        id
+        name
+        email
+      }
+    }
+  `);
 
-  const handleFormSubmit = (params) => updateUserApi(params);
+  const handleFormSubmit = async (params) => {
+    await updateUserMutation({ variables: params });
+    refresh();
+  };
 
   const onClick = async () => {
     // eslint-disable-next-line no-restricted-globals, no-alert
     if (!confirm("Are you sure? Everything will be deleted!")) return;
 
-    await deleteUserApi();
+    await deleteUserMutation();
+    refresh();
   };
 
   return (
@@ -66,7 +72,7 @@ export default function Profile({ user }: Props) {
           <input type="password" {...register("password")} />
         </label>
 
-        {updateUserError && (
+        {updateUserMutationState.error && (
           <p className="text-red-500">
             Welp seems that this profile is invalid
           </p>
@@ -76,12 +82,12 @@ export default function Profile({ user }: Props) {
           className="u-link disabled:opacity-50"
           type="button"
           onClick={onClick}
-          disabled={deletingUser}
+          disabled={deleteUserMutationState.loading}
         >
           Delete my account
         </button>
 
-        {deleteUserError && (
+        {deleteUserMutationState.error && (
           <p className="text-red-500">
             Welp seems that we can&apos;t delete the account for some reason
           </p>
@@ -91,14 +97,14 @@ export default function Profile({ user }: Props) {
           <button
             className="u-button disabled:opacity-50"
             type="submit"
-            disabled={updatingUser}
+            disabled={updateUserMutationState.loading}
           >
             Submit
           </button>
         </div>
       </form>
 
-      {formState.isSubmitted && updatedUser && (
+      {formState.isSubmitted && updateUserMutationState.data?.updateUser && (
         <p className="mt-2">Profile updated! :)</p>
       )}
     </div>

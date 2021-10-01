@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { User } from "@prisma/client";
 import useServerRefresher from "src/hooks/useServerRefresher";
-import { logout } from "src/web/apiRoutes";
+import { useMutation } from "graphql-hooks";
 
 interface Props {
   user: User;
@@ -10,9 +10,14 @@ interface Props {
 
 export default function Navbar({ user }: Props) {
   const refresh = useServerRefresher();
+  const [logoutMutation] = useMutation(`
+    mutation Logout {
+      logout
+    }
+  `);
 
   const onLogout = async () => {
-    await logout();
+    await logoutMutation();
 
     refresh();
   };

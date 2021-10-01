@@ -1,24 +1,23 @@
-import React, { useMemo } from "react";
+import React, { useRef } from "react";
 import { ErrorBoundary, useErrorHandler } from "react-error-boundary";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { GraphQLClient, ClientContext } from "graphql-hooks";
 import Error from "src/components/Error";
 import "tailwindcss/tailwind.css";
 import "src/styles/defaults.css";
 
 function InnerApp({ Component, pageProps }) {
   const onError = useErrorHandler();
-  const queryClient = useMemo(
-    () =>
-      new QueryClient({
-        defaultOptions: { mutations: { onError }, queries: { onError } },
-      }),
-    [onError]
+  const clientRef = useRef(
+    new GraphQLClient({
+      url: "/api/graphql",
+      onError,
+    })
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <ClientContext.Provider value={clientRef.current}>
       <Component {...pageProps} />
-    </QueryClientProvider>
+    </ClientContext.Provider>
   );
 }
 

@@ -42,13 +42,13 @@ export async function updateUser(
   return updatedUser;
 }
 
-export async function deleteUser(user: User) {
-  const [_, newUser] = await prisma.$transaction([
+export async function deleteUser(user: User): Promise<User> {
+  const [_, deletedUser] = await prisma.$transaction([
     prisma.note.deleteMany({ where: { userId: user.id } }),
     prisma.user.delete({ where: { id: user.id } }),
   ]);
 
-  if (newUser) newUser.password = "";
+  if (deletedUser) deletedUser.password = "";
 
-  return newUser;
+  return deletedUser;
 }

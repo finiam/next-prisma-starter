@@ -3,10 +3,9 @@ import Head from "next/head";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { GetServerSidePropsContext } from "next";
-import { useMutation } from "react-query";
 import useServerRefresher from "src/hooks/useServerRefresher";
 import { userFromRequest } from "src/web/tokens";
-import { createUser } from "src/web/apiRoutes";
+import { useMutation } from "graphql-hooks";
 
 export default function SignUp() {
   const refresh = useServerRefresher();
@@ -15,15 +14,21 @@ export default function SignUp() {
     register,
     formState: { errors },
   } = useForm();
-  const {
-    isLoading,
-    isError,
-    mutate: createUserMutation,
-  } = useMutation(createUser, {
-    onSuccess: refresh,
-  });
+  const [createUserMutation, createUserMutationState] = useMutation(`
+    mutation CreateUser($email: String!, $name: String!, $password: String!) {
+      createUser(email: $email, name: $name, password: $password) {
+        id
+        name
+        email
+      }
+    }
+  `);
 
-  const handleCreateUser = (params) => createUserMutation(params);
+  const handleCreateUser = async (params) => {
+    await createUserMutation({ variables: params });
+
+    refresh();
+  };
 
   return (
     <main>
@@ -68,12 +73,15 @@ export default function SignUp() {
           <button
             className="u-button"
             type="submit"
-            disabled={Object.keys(errors).length > 0 || isLoading}
+            disabled={
+              Object.keys(errors).length > 0 || createUserMutationState.loading
+            }
           >
             Sign Up
           </button>
 
-          {isError && <p>User exists</p>}
+          {(Object.keys(errors).length > 0 ||
+            createUserMutationState.error) && <p>User exists</p>}
 
           <Link href="/">
             <a className="block underline" href="/">
